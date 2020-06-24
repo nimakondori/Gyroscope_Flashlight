@@ -84,24 +84,34 @@ void loop(){
     }
     else if(Press_State == LONG_PRESS && isOn)
     {
-      recordRegisters();
-      rollangle= y;
+      for (int i = 0; i < 10; i++){
+        recordRegisters();
+        rollangle += y;
+      }
+      rollangle /= 10;
 //      if (rollangle<0) rollangle = rollangle * -1;
       while(digitalRead(pushButton) == LOW){
-      recordRegisters();
-      new_rollangle = y;
+      for (int i = 0; i < 10; i++){
+        recordRegisters();
+        new_rollangle += y;
+      }
+      new_rollangle /= 10;
 //      if (new_rollangle<0) new_rollangle = new_rollangle * -1;
-      Serial.print("Original intensity: ");
+      Serial.print("new_rollangle: ");
       Serial.print(new_rollangle);
       Serial.print("\n");
 //      if (new_rollangle - rollangle > 6)
       light_change = (int)((new_rollangle) - (rollangle));
-      light_intensity = light_intensity + light_change;
+      light_intensity = light_intensity - light_change*220/180;
       if (light_intensity > 240 || light_change > 240) light_intensity = 240;
       else if(light_intensity < 20 || light_change < -255) light_intensity = 20; 
-      Serial.print("NEW intensity: ");
+      Serial.print("rollangle: ");
       Serial.print(rollangle);
       Serial.print("\n");
+      Serial.print("light_change: ");
+      Serial.print(light_change);
+      Serial.print("\n");
+      rollangle = new_rollangle;
       for (float ledNumber = 0; ledNumber < 16; ledNumber ++) {
          if(colorState == COLOR_1)
           pixels.setPixelColor(ledNumber, pixels.Color(0,
